@@ -1,15 +1,5 @@
 version: "2.2"
 services:
-  es:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - 9200:9200
-    networks:
-      - orders_network
   postgres:
     build: ./postgres
     container_name: postgres
@@ -17,14 +7,16 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
-    networks:
-      - orders_network
-  backend:
-    build: ./backend
-    container_name: orders_api
-    networks:
-      - orders_network
+  keycloack:
+    image: quay.io/keycloak/keycloak:10.0.0
+    environment:
+      - KEYCLOAK_USER=keycloak
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_ADDR=postgres
     ports:
-      - 8080:8080
-networks:
-  orders_network:
+      - 8090:8080
+    depends_on:
+      - "postgres"
