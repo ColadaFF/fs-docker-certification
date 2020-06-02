@@ -7,6 +7,8 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
+    networks:
+      - cert_network
   keycloack:
     image: quay.io/keycloak/keycloak:10.0.0
     environment:
@@ -20,3 +22,8 @@ services:
       - 8090:8080
     depends_on:
       - "postgres"
+    networks:
+      - cert_network
+networks:
+  cert_network:
+    name: cert_network
